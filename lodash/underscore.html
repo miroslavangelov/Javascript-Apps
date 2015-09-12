@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Books</title>
+	<style type="text/css">
+	</style>
+	
+</head>
+<body>
+	
+</body>
+<script src="libs/jquery-2.1.4.min.js"></script>
+<script src="libs/underscore.js"></script>
+<script>
+	var books = [{"book":"The Grapes of Wrath","author":"John Steinbeck","price":"34,24","language":"French"},
+			{"book":"The Great Gatsby","author":"F. Scott Fitzgerald","price":"39,26","language":"English"},
+			{"book":"Nineteen Eighty-Four","author":"George Orwell","price":"15,39","language":"English"},
+			{"book":"Ulysses","author":"James Joyce","price":"23,26","language":"German"},
+			{"book":"Lolita","author":"Vladimir Nabokov","price":"14,19","language":"German"},
+			{"book":"Catch-22","author":"Joseph Heller","price":"47,89","language":"German"},
+			{"book":"The Catcher in the Rye","author":"J. D. Salinger","price":"25,16","language":"English"},
+			{"book":"Beloved","author":"Toni Morrison","price":"48,61","language":"French"},
+			{"book":"Of Mice and Men","author":"John Steinbeck","price":"29,81","language":"Bulgarian"},
+			{"book":"Animal Farm","author":"George Orwell","price":"38,42","language":"English"},
+			{"book":"Finnegans Wake","author":"James Joyce","price":"29,59","language":"English"},
+			{"book":"The Grapes of Wrath","author":"John Steinbeck","price":"42,94","language":"English"}];
+
+	var sortByAuthor = _.sortBy(books, function(book){
+		return [book["author"], book["price"]];
+	});
+	var groupByLanguage = _.groupBy(sortByAuthor, "language");
+	
+	var groupByAuthors = _.groupBy(books, "author");
+	var newArr = [];
+	for (var key in groupByAuthors) {
+		var priceSum = 0;
+		_.each(groupByAuthors[key], function(element) {
+			var price = element["price"].replace(",", ".");
+			priceSum += +price;
+		})
+		var avgPrice = priceSum / groupByAuthors[key].length;
+		newArr.push(key + " - " + avgPrice)
+	}
+	
+	var groupBooks = _.filter(books, function(book) {
+		var price = book["price"].replace(",", ".");
+		return (book["language"] === "English" || book["language"] === "German") && +price < 30
+	});
+	var groupBooksByAuthor = _.groupBy(groupBooks, "author")
+	console.log(groupBooksByAuthor)
+</script>
+</html>

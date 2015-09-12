@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Names</title>
+	<style type="text/css">
+	</style>
+	
+</head>
+<body>
+	<ul>
+		<li><a href="#/Peter">Peter</a></li>
+		<li><a href="#/Bill">Bill</a></li>
+		<li><a href="#/George">George</a></li>
+		<li><a href="#/Steven">Steven</a></li>
+	</ul>
+	<div id="wrapper"></div>
+</body>
+<script src="libs/jquery-1.11.2.min.js"></script>
+<script src="libs/sammy.js"></script>
+<script>
+	var app = app || {};
+	(function() {
+		app.router = Sammy(function() {
+			this.get("#/Peter", function() {
+				$("#wrapper").empty();
+				$("#wrapper").append("<h2>Hello, Peter!</h2>");
+			});
+			this.get("#/Bill", function() {
+				$("#wrapper").empty();
+				$("#wrapper").append("<h2>Hello, Bill!</h2>");
+			});
+			this.get("#/George", function() {
+				$("#wrapper").empty();
+				$("#wrapper").append("<h2>Hello, George!</h2>");
+			});
+			this.get("#/Steven", function() {
+				$("#wrapper").empty();
+				$("#wrapper").append("<h2>Hello, Steven!</h2>");
+			});
+		})
+		app.router.run("#/");
+	})();
+</script>
+</html>

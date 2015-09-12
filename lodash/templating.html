@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Table</title>
+	<style type="text/css">
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+	</style>
+	
+</head>
+<body>
+	<div id="wrapper">
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Job Title</th>
+				<th>Website</th>
+			</tr>
+		</table>
+	</div>
+	
+</body>
+<script src="libs/jquery-2.1.4.min.js"></script>
+<script src="libs/mustache.js"></script>
+<script>
+	
+	var objects = [
+        {
+            'name': 'Garry Finch',
+            'jobTitle' : 'Frond End Technical Lead',
+            'website' : 'http://website.com'
+        },
+        {
+            'name': 'Bob McFray',
+            'jobTitle' : 'Photographer',
+            'website' : 'http://goo.gle'
+        },
+        {
+            'name': 'Jenny O\'Sullivan',
+            'jobTitle' : 'LEGO Geek',
+            'website' : 'http://stackoverflow.com'
+        }];
+		$.get("template.html", function(template) {
+			var template = template.documentElement.outerHTML;
+			console.log(template)
+			for (var i = 0; i < objects.length; i++) {
+				var currentObject = objects[i];
+				var outp = Mustache.render(template, currentObject);
+				$('table').append(outp);
+			}
+		});
+
+        
+
+</script>
+</html>

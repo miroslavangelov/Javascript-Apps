@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Books</title>
+	<style type="text/css">
+		#error {
+			color: red;
+			font-weight: bold;
+			font-size: 20px;
+		}
+	</style>
+	<script src="jquery-1.11.2.min.js"></script>
+</head>
+<body>
+	<form>
+		<label>Title: </label>
+		<input type="text" name="addNewTitle" />
+		<label>Author: </label>
+		<input type="text" name="addNewAuthor" />
+		<label>ISBN: </label>
+		<input type="text" name="addNewIsbn" />
+		<input type="button" value="Add book" id="addBook" /> <br />
+
+		<label>Edit title</label>
+		<input type="text" name="editTitle" /> <br />
+		<label>Edit author</label>
+		<input type="text" name="editAuthor" /> <br />
+		<label>Edit ISBN</label>
+		<input type="text" name="editIsbn" /> <br />
+	</form>
+	<div id="books"></div>
+	
+</body>
+<script>
+	(function() {
+		var i;
+		function getBooks(){
+			$.ajax({
+				method: "GET",
+				headers: {
+					"X-Parse-Application-Id": 'HiTBbzrkhwbh8yx5ibZk5kx5P8lIqwvOMf0z0Wxv',
+					"X-Parse-REST-API-Key": 'pn2SxvzjJeDTFMsqHhdbozZI2AqyFYfsQoXt0GCV'
+				},
+				url: "https://api.parse.com/1/classes/Book"
+			}).success(function(data) {
+				$("#books").append("<h2>Books:</h2>");
+				for (i = 0; i < data.results.length; i += 1) {
+					var book = data.results[i];
+					var bookLink = $("<p>" + (i+1) + ". Title: " + book.title + " </p>");
+					var editBookTitle = $("<a href='#'>[Edit]</a>");
+					var authorLink = $("<p>&nbsp;&nbsp;&nbsp;Author: " + book.author + " </p>");
+					var editBookAuthor = $("<a href='#'>[Edit]   </a>");
+					var isbnLink = $("<p>&nbsp;&nbsp;&nbsp;ISBN: " + book.isbn + " </p>");
+					var editIsbn = $("<a href='#'>[Edit]</a>");
+					var deleteBook = $('<input type="button" value="Delete book"/>');
+					$(deleteBook).data("deleteBook", book);
+					$(deleteBook).click(removeBook);
+					$(editBookTitle).data("editTitle", book);
+					$(editBookAuthor).data("editAuthor", book);
+					$(editIsbn).data("editIsbn", book);
+					$(editBookTitle).click(titleClicked);
+					$(editBookAuthor).click(authorClicked);
+					$(editIsbn).click(isbnClicked);
+					$(editBookTitle).appendTo(bookLink);
+					$(authorLink).appendTo(bookLink);
+					$(editBookAuthor).appendTo(authorLink);
+					$(isbnLink).appendTo(bookLink);
+					$(editIsbn).appendTo(isbnLink);
+					$(editBookTitle).data("book", book);
+					$(deleteBook).appendTo(bookLink);
+					bookLink.appendTo("#books")
+				}
+			}).error(function (error) {
+				console.log("Error!");
+			});
+		}
+		
+		function titleClicked() {
+			var title = $(this).data("editTitle");
+			var id = title.objectId;
+			var newTitle = {"title": $("input[name='editTitle']").val()};
+			editBook(newTitle,id);
+		}
+		function authorClicked() {
+			var author = $(this).data("editAuthor");
+			var id = author.objectId;
+			var newAuthor = {"author": $("input[name='editAuthor']").val()};
+			editBook(newAuthor,id);
+		}
+		function isbnClicked() {
+			var isbn = $(this).data("editIsbn");
+			var id = isbn.objectId;
+			var newIsbn = {"isbn": $("input[name='editIsbn']").val()};
+			editBook(newIsbn,id);
+		}
+		function removeBook() {
+			var currentBook = $(this).data("deleteBook");
+			var id = currentBook.objectId;
+			$.ajax({
+					method: "DELETE",
+					headers: {
+						"X-Parse-Application-Id": 'HiTBbzrkhwbh8yx5ibZk5kx5P8lIqwvOMf0z0Wxv',
+						"X-Parse-REST-API-Key": 'pn2SxvzjJeDTFMsqHhdbozZI2AqyFYfsQoXt0GCV'
+					},
+					url: "https://api.parse.com/1/classes/Book/" + id
+				})
+		}
+		getBooks();
+		
+		function addBook(data) {
+			$.ajax({
+				method: "POST",
+				headers: {
+					"X-Parse-Application-Id": 'HiTBbzrkhwbh8yx5ibZk5kx5P8lIqwvOMf0z0Wxv',
+					"X-Parse-REST-API-Key": 'pn2SxvzjJeDTFMsqHhdbozZI2AqyFYfsQoXt0GCV'
+				},
+				url: "https://api.parse.com/1/classes/Book",
+				data: JSON.stringify(data),
+				contentType: 'application/json',
+				accept: 'application/json'
+			});
+		}
+		
+		function editBook(data, id) {
+			$.ajax({
+				method: "PUT",
+				headers: {
+					"X-Parse-Application-Id": 'HiTBbzrkhwbh8yx5ibZk5kx5P8lIqwvOMf0z0Wxv',
+					"X-Parse-REST-API-Key": 'pn2SxvzjJeDTFMsqHhdbozZI2AqyFYfsQoXt0GCV'
+				},
+				url: "https://api.parse.com/1/classes/Book/" + id,
+				data: JSON.stringify(data),
+				contentType: 'application/json',
+				accept: 'application/json'
+			});
+		}
+		
+		$("#addBook").click(function() {
+			var book = {
+				title: $("input[name='addNewTitle']").val(),
+				author: $("input[name='addNewAuthor']").val(),
+				isbn: $("input[name='addNewIsbn']").val()
+			}
+			if (book.title === "" || book.author === "" || book.isbn === "") {
+				throw new Error("Fields can not be empty!");
+			}
+			addBook(book);
+		});
+	
+	
+	})()
+
+</script>
+</html>

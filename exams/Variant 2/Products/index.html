@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style/style.css"/>
+    <title>Products</title>
+</head>
+<body>
+<div id="wrapper">
+    <header>
+        <img class="img-header" src="imgs/trash.png" width="50px"/>
+        <h1 class="site-header">Products</h1>
+        <nav id="menu">
+            <ul id="not-logged">
+                <li class="nav-button"><a href="#/home/">Home</a></li>
+                <li class="nav-button"><a href="#/login/">Login</a></li>
+                <li class="nav-button"><a href="#/register/">Register</a></li>
+            </ul>
+            <ul id="logged">
+                <li class="nav-button"><a href="#/home/">Home</a></li>
+                <li class="nav-button"><a href="#/products/">Products</a></li>
+                <li class="nav-button"><a href="#/products/add/">Add Product</a></li>
+                <li class="nav-button"><a href="#/logout/">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div id="main">
+    </div>
+</div>
+
+
+</body>
+<script src="libs/jquery-1.11.2.min.js"></script>
+<script src="libs/q.js"></script>
+<script src="libs/sammy.js"></script>
+<script src="libs/mustache.js"></script>
+<script src="libs/noty.js"></script>
+
+<script src="models/ajaxRequester.js"></script>
+<script src="models/headers.js"></script>
+<script src="models/userModel.js"></script>
+<script src="models/productModel.js"></script>
+
+<script src="views/userView.js"></script>
+<script src="views/productView.js"></script>
+
+<script src="controllers/userController.js"></script>
+<script src="controllers/productController.js"></script>
+
+
+
+<script src="app.js"></script>
+</html>

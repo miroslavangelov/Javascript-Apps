@@ -1,0 +1,306 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Task 1</title>
+	<style type="text/css">
+		#error {
+			color: red;
+			font-weight: bold;
+			font-size: 20px;
+		}
+	</style>
+	<script src="jquery-1.11.2.min.js"></script>
+</head>
+<body>
+	<form>
+		<label>Add new country</label>
+		<input type="text" name="addCountryText">
+		<input type="button" value="Add country" id="addCountry" /> <br />
+		<label>Edit country</label>
+		<input type="text" name="editCountryText">
+		<label>New country name</label>
+		<input type="text" name="newCountryText">
+		<input type="button" value="Edit country" id="editCountry" /> <br />
+		<label>Delete country</label>
+		<input type="text" name="deleteCountryText">
+		<input type="button" value="Remove country"id="removeCountry" />
+		<p></p>
+		<label>Add new town</label>
+		<input type="text" name="addTownText">
+		<label>to country</label>
+		<input type="text" name="addCountryTextForTown">
+		<input type="button" value="Add town" id="addTown" /> <br />
+		<label>Edit town</label>
+		<input type="text" name="editTownText">
+		<label>New town name</label>
+		<input type="text" name="newTownText">
+		<input type="button" value="Edit town" id="editTown" /> <br />
+		<label>Delete town</label>
+		<input type="text" name="deleteTownText">
+		<input type="button" value="Remove town"id="removeTown" />
+	</form>
+	<div id="countries"></div>
+	<div id="towns"></div>
+	
+</body>
+<script>
+(function() {
+	$(function() {
+		var countryResults, i, townResults;
+		function getCountries(){
+			$.ajax({
+				method: "GET",
+				headers: {
+					"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+					"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+				},
+				url: "https://api.parse.com/1/classes/Country"
+			}).success(function(data) {
+				countryResults=data.results;
+				$("#countries").append("<h2>Countries:</h2>");
+				for (var i = 0; i < data.results.length; i += 1) {
+					var country = data.results[i];
+					var countryItem = $("<p>")
+					var countryLink = $("<a href='#'>" + country.countryName + "</a>");
+					$(countryLink).data("country", country);
+					countryLink.appendTo(countryItem);
+					$(countryLink).click(countryClicked);
+					countryItem.appendTo("#countries")
+					
+				}
+			}).error(function (error) {
+				console.log("Error!");
+			});
+		}
+		getCountries();
+		
+		
+		function countryClicked() {
+			var country = $(this).data("country");
+			var id = country.objectId;
+			$.ajax({
+			method: "GET",
+			headers: {
+				"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+				"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+			},
+			url: 'https://api.parse.com/1/classes/Town?where={"country":{"__type":"Pointer","className":"Country","objectId":"' + id + '"}}',
+			}).success(function(data) {
+				townResults = data.results;
+				console.log(townResults)
+				$("#towns").children().empty();
+				$("#towns").append("<h2>Towns:</h2>");
+				for (var i = 0; i < data.results.length; i += 1) {
+					var town = data.results[i];
+					$("#towns").append("<p><strong>" + town.townName + "</strong></p>");
+				}
+			}).error(function (error) {
+				console.log("Error!");
+			});
+		}
+		
+		
+		
+		
+		function addCountry(data) {
+			$.ajax({
+				method: "POST",
+				headers: {
+					"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+					"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+				},
+				url: "https://api.parse.com/1/classes/Country",
+				data: JSON.stringify(data),
+				contentType: 'application/json',
+				accept: 'application/json'
+				})
+		}
+		
+		function removeCountry(id) {
+				$.ajax({
+					method: "DELETE",
+					headers: {
+						"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+						"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+					},
+					url: "https://api.parse.com/1/classes/Country/" + id
+				})
+		}
+		
+		function editCountry(id, editedCountry) {
+				$.ajax({
+					method: "PUT",
+					headers: {
+						"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+						"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+					},
+					url: "https://api.parse.com/1/classes/Country/" + id,
+					data: JSON.stringify({
+						'countryName': editedCountry 
+					})
+				})
+		
+		}
+		
+		function editTown(id, editedTown) {
+				$.ajax({
+					method: "PUT",
+					headers: {
+						"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+						"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+					},
+					url: "https://api.parse.com/1/classes/Town/" + id,
+					data: JSON.stringify({
+						'townName': editedTown
+					})
+				})
+		}
+		
+		function deleteTown(id) {
+				$.ajax({
+					method: "DELETE",
+					headers: {
+						"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+						"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+					},
+					url: "https://api.parse.com/1/classes/Town/" + id
+				})
+		}
+		
+		function addTown(data) {
+			$.ajax({
+				method: "POST",
+				headers: {
+					"X-Parse-Application-Id": 'rgBFy4tidu4FVMbFEPZIfi4SYqFfjYooglFd7MaZ',
+					"X-Parse-REST-API-Key": 'QdJzEeor5yC93YW1dwPNqpsX606YecVPYDZPMxhx'
+				},
+				url: "https://api.parse.com/1/classes/Town",
+				data: JSON.stringify(data),
+				contentType: 'application/json',
+				accept: 'application/json'
+			})
+		}
+		
+		$(function () {
+			$("#addCountry").click(function() {
+				var country = {countryName: $("input[name='addCountryText']").val()}
+				$("#countries").children().empty();
+				addCountry(country);
+				getCountries();
+			})
+		});
+		
+		$(function () {
+			$("#removeCountry").click(function() {
+				var country = $("input[name='deleteCountryText']").val();
+				var currentObjectId;
+				for (i=0; i < countryResults.length; i++) {
+					var currentCountry = countryResults[i].countryName;
+					if (currentCountry === country) {
+						currentObjectId = countryResults[i].objectId;
+					}
+				}
+				if (currentObjectId === undefined) {
+					throw new Error("Invalid country!");
+				}
+				else {
+					removeCountry(currentObjectId);
+				}
+				$("#countries").children().empty();
+				getCountries();
+			})
+		});
+		
+		$(function () {
+			$("#editCountry").click(function() {
+				var country = $("input[name='editCountryText']").val();
+				var editedCountry = $("input[name='newCountryText']").val();
+				var currentObjectId;
+				for (i=0; i < countryResults.length; i++) {
+					var currentCountry = countryResults[i].countryName;
+					if (currentCountry === country) {
+						currentObjectId = countryResults[i].objectId;
+					}
+				}
+				if (currentObjectId === undefined) {
+					throw new Error("Invalid country!");
+				}
+				else {
+					editCountry(currentObjectId, editedCountry);
+				}
+				$("#countries").children().empty();
+				getCountries();
+			})
+		});
+		
+		
+		$(function () {
+			$("#editTown").click(function() {
+				var town = $("input[name='editTownText']").val();
+				var editedTown = $("input[name='newTownText']").val();
+				var currentObjectId;
+				for (i=0; i < townResults.length; i++) {
+					var currentTown = townResults[i].townName;
+					if (currentTown === town) {
+						currentObjectId = townResults[i].objectId;
+					}
+				}
+				if (currentObjectId === undefined) {
+					throw new Error("Invalid country!");
+				}
+				else {
+					editTown(currentObjectId, editedTown);
+				}
+			})
+		});
+		
+		$(function () {
+			$("#removeTown").click(function() {
+				var town = $("input[name='deleteTownText']").val();
+				var currentObjectId;
+				for (i=0; i < townResults.length; i++) {
+					var currentTown = townResults[i].townName;
+					if (currentTown === town) {
+						currentObjectId = townResults[i].objectId;
+					}
+				}
+				if (currentObjectId === undefined) {
+					throw new Error("Invalid country!");
+				}
+				else {
+					deleteTown(currentObjectId);
+				}
+			})
+		});
+				
+		$(function () {
+			$("#addTown").click(function() {
+				var town = $("input[name='addTownText']").val();
+				var country = $("input[name='addCountryTextForTown']").val();
+				var currentObjectId;
+				for (i=0; i < countryResults.length; i++) {
+					var currentCountry = countryResults[i].countryName;
+					if (currentCountry === country) {
+						currentObjectId = countryResults[i].objectId;
+						console.log(currentObjectId)
+					}
+				}
+				if (currentObjectId === undefined) {
+					throw new Error("Invalid country!");
+				}
+				var finalData = {
+					"townName" : town,
+					"country" : { "__type": "Pointer",
+								"className": "Country",
+								"objectId": currentObjectId
+								}
+				}
+				addTown(finalData);
+				
+			})
+		});
+		
+	});
+})();
+</script>
+</html>

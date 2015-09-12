@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Task 1</title>
+	<style type="text/css">
+	</style>
+	<script src="jquery-1.11.2.min.js"></script>
+</head>
+<body>
+	<form>
+		<label>Please enter your name:</label>
+		<input type="text" name="userName" />
+		<input type="button" value="Submit" name="submitName"/>
+	</form>
+	<div id="user"></div>
+</body>
+<script>
+	$("input[name='submitName']").click(function() {
+	$("#user").children().empty();
+		var arr = [];
+		var name = $("input[name='userName']").val();
+		var visitCounts = 1;
+		var obj = {
+			"name" : name,
+			"visits" : visitCounts
+		}
+		var checkName = false;
+		
+		if (sessionStorage.length > 0) {
+			var currentObjects = JSON.parse(sessionStorage.getItem("key"));
+			for (var i = 0; i < currentObjects.length; i++) {
+				var currentObject = currentObjects[i];
+				if (currentObject.name === name) {
+					currentObject.visits++;
+					checkName = true;
+					$("#user").append("<p>Hello " + name + "! You have visited this website " + currentObject.visits +
+					" times!</p>");
+				}
+				arr.push(currentObject);
+			}
+		}
+		var count = 0;
+		if (checkName) {
+			checkName = false;
+		}
+		else {
+			arr.push(obj);
+		}
+		
+		for (i = 0; i < arr.length; i++) {
+			var currentElement = arr[i].visits;
+			count+=currentElement;
+		}
+		
+		$("#user").append("<p>Total visits: " + count + '</p>');
+		sessionStorage.setItem("key", JSON.stringify(arr));
+		console.log(sessionStorage)
+	});
+</script>
+</html>

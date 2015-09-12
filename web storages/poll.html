@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Task 2</title>
+	<style type="text/css">
+		ul {
+			list-style-type: none;
+		}
+	</style>
+	<script src="jquery-1.11.2.min.js"></script>
+</head>
+<body>
+	<form>
+		<p>Имате 1 минута, за да отговорите на въпросите.</p>
+		<div id="timer">
+		</div>
+		<ul id="questions">
+			<li id="q1">
+				<div>1. Кой е създателят на общата теория на относителността?</div>
+				<label for="q1a1">A. Макс Планк</label><br />
+				<label for="q1a2">B. Мичио Каку</label><br />
+				<label for="q1a3">C. Галилео Галилей</label><br />
+				<label for="q1a4">D. Алберт Айнщайн</label><br />
+			</li>
+			<label>Вашият отговор:</label>
+			<input type="text" name="firstQuestion" />
+			<p></p>
+			<li id="q2">
+				<div>2. Кой е създателят на теорията за еволюцията?</div>
+				<label for="q1a1">A. Ричард Докинс</label><br />
+				<label for="q1a2">B. Чарлз Дарвин</label><br />
+				<label for="q1a3">C. Едуард Уилсън</label><br />
+				<label for="q1a4">D. Мат Ридли</label><br />
+			</li>
+			<label>Вашият отговор:</label>
+			<input type="text" name="secondQuestion" />
+			<p></p>
+			<li id="q3">
+				<div>3. Кой е създателят на теорията за гравитацията?</div>
+				<label for="q1a1">A. Исак Нютон</label><br />
+				<label for="q1a2">B. Галилео Галилей</label><br />
+				<label for="q1a3">C. Николай Куперник</label><br />
+				<label for="q1a4">D. Кристиан Хюйгенс</label><br />
+			</li>
+			<label>Вашият отговор:</label>
+			<input type="text" name="thirdQuestion" />
+			<p></p>
+			<li id="q4">
+				<div>4. Кой е създателят на теорията за електромагнетизма?</div>
+				<label for="q1a1">A. Джовани Касини</label><br />
+				<label for="q1a2">B. Никола Тесла</label><br />
+				<label for="q1a3">C. Джеймс Максуел</label><br />
+				<label for="q1a4">D. Томас Едисън</label><br />
+			</li>
+			<label>Вашият отговор:</label>
+			<input type="text" name="fourthQuestion" />
+		</ul>
+	</form>
+	<button id="submitButton">Submit</button>
+	<div id="result"></div>
+</body>
+<script>
+	var obj = {
+		"firstAnswer" : "",
+		"secondAnswer" : "",
+		"thirdAnswer" : "",
+		"fourthAnswer" : "",
+		"timerSeconds" : 60
+	};
+	
+	if (localStorage.length > 0) {
+		obj = JSON.parse(localStorage.getItem("key"));
+	}
+	if (obj["timerSeconds"] === 60) {
+		$("input[name='firstQuestion']").val("");
+		$("input[name='secondQuestion']").val("");
+		$("input[name='thirdQuestion']").val("");
+		$("input[name='fourthQuestion']").val("");
+	}
+
+	$("input[name='firstQuestion']").keyup(function() {
+		var firstAnswer = $("input[name='firstQuestion']").val().toLowerCase();
+		obj["firstAnswer"] = firstAnswer;
+		localStorage.setItem("key", JSON.stringify(obj));
+	})
+	$("input[name='secondQuestion']").keyup(function() {
+		var secondAnswer = $("input[name='secondQuestion']").val().toLowerCase();
+		obj["secondAnswer"] = secondAnswer;
+		localStorage.setItem("key", JSON.stringify(obj));
+	})
+	$("input[name='thirdQuestion']").keyup(function() {
+		var thirdAnswer = $("input[name='thirdQuestion']").val().toLowerCase();
+		obj["thirdAnswer"] = thirdAnswer;
+		localStorage.setItem("key", JSON.stringify(obj));
+	})
+	$("input[name='fourthQuestion']").keyup(function() {
+		var fourthAnswer = $("input[name='fourthQuestion']").val().toLowerCase();
+		obj["fourthAnswer"] = fourthAnswer;
+		localStorage.setItem("key", JSON.stringify(obj));
+	});
+	var countClicks = 0;
+	$("#submitButton").click(function() {
+		if (countClicks > 0) {
+			localStorage.clear();
+			return;
+		}
+		countClicks+=1;
+		result();
+		localStorage.clear();
+		obj["timerSeconds"] = 60;
+		clearInterval(timer);
+		
+	})
+		var timer = setInterval(function() {
+			$("#timer").children().empty();
+			obj["timerSeconds"] -= 1;
+			$("#timer").append("<p>Оставащо време: " + obj["timerSeconds"] + " секунди</p>")
+			if (obj["timerSeconds"] <= 0) {
+				result();
+				
+				localStorage.clear();
+				obj["timerSeconds"] = 60;
+				clearInterval(timer);
+			}
+			localStorage.setItem("key", JSON.stringify(obj));
+			
+		}, 1000);
+		
+	function result() {
+		$("#result").children().empty();
+		var countPoints = 0;
+		var result = "";
+		if (obj.firstAnswer !== "d") {
+			result+="First question: wrong!" + "<br />";
+		}
+		else {
+			result+="First question: correct!"  + "<br />";
+			countPoints++;
+		}
+		if (obj.secondAnswer !== "b") {
+			result+="Second question: wrong!"  + "<br />";
+		}
+		else {
+			result+="Second question: correct!"  + "<br />";
+			countPoints++;
+		}
+		if (obj.thirdAnswer !== "a") {
+			result+="Third question: wrong!"  + "<br />";
+		}
+		else {
+			result+="Third question: correct!"  + "<br />";
+			countPoints++;
+		}
+		if (obj.fourthAnswer !== "c") {
+			result+="Fourth question: wrong!"  + "<br />";
+		}
+		else {
+			result+="Fourth question: correct!"  + "<br />";
+			countPoints++;
+		}
+		result+="Points: " + countPoints + "/4";
+		var resultToDom = $("#result").append("<p>" + result + "</p>");
+		return resultToDom;
+	}
+	
+</script>
+</html>

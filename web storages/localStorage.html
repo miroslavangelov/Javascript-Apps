@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Task 1</title>
+	<style type="text/css">
+	</style>
+	<script src="jquery-1.11.2.min.js"></script>
+</head>
+<body>
+	<form>
+		<label>Please enter your name:</label>
+		<input type="text" name="userName" />
+		<input type="button" value="Submit" name="submitName"/>
+	</form>
+	
+</body>
+<script>
+	$("input[name='submitName']").click(function() {
+		var arr = [];
+		var name = $("input[name='userName']").val();
+		var visitCounts = 0;
+		var obj = {
+			"name" : name,
+			"visits" : visitCounts
+		}
+		var checkName = false;
+		
+		if (localStorage.length > 0) {
+			var currentObjects = JSON.parse(localStorage.getItem("key"));
+			for (var i = 0; i < currentObjects.length; i++) {
+				var currentObject = currentObjects[i];
+				if (currentObject.name === name) {
+					currentObject.visits++;
+					checkName = true;
+					alert("Hello " + name)
+				}
+				arr.push(currentObject);
+			}
+		}
+		if (checkName) {
+			checkName = false;
+		}
+		else {
+			arr.push(obj);
+		}
+		
+
+		localStorage.setItem("key", JSON.stringify(arr));
+	
+
+		console.log(localStorage)
+	});
+</script>
+</html>
